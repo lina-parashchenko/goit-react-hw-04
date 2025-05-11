@@ -1,5 +1,5 @@
 import css from "./ImageGallery.module.css";
-import ImageCard from "../ImageCard/ImageCard";
+import ImageCard from "./ImageCard/ImageCard";
 
 export default function ImageGallery({ images, onImageClick }) {
   return (

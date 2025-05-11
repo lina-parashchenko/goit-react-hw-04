@@ -1,4 +1,5 @@
 import css from "./SearchBar.module.css";
+import { useState } from "react";
 
 export default function SearchBar({ onSubmit }) {
   const [query, setQuery] = useState("");
@@ -18,7 +19,7 @@ export default function SearchBar({ onSubmit }) {
           autoFocus
           placeholder="Search images and photos"
           value={query}
-          onChange={(event) => setQuery(e.target.value)}
+          onChange={(event) => setQuery(event.target.value)}
           className={css.input}
         />
         <button type="submit" className={css.button}>
