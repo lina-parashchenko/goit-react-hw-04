@@ -1,14 +1,10 @@
-import css from "./Contact.module.css";
+import "./LoadMoreBtn.module.css";
 
-export default function Contact({ data: { id, name, number }, onDelete }) {
+export default function LoadMoreBtn({ onClick }) {
   return (
-    <div className={css.contactWrap}>
-      <div className={css.text}>
-        <p>{name}</p>
-        <p>{number}</p>
-      </div>
-      <button className={css.btn} onClick={() => onDelete(id)}>
-        Delete
+    <div className="load-more-wrapper">
+      <button className="load-more-button" onClick={onClick}>
+        Load more
       </button>
     </div>
   );
