@@ -1,28 +1,19 @@
 import css from "./ImageModal.module.css";
+import ReactModal from "react-modal";
+
+ReactModal.setAppElement("#root");
 
 export default function ImageModal({ image, onClose }) {
-  const handleBackdropClick = (event) => {
-    if (event.target === event.currentTarget) {
-      onClose();
-    }
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === "Escape") {
-      onClose();
-    }
-  };
+  if (!image || !image.urls || !image.urls.full) return null;
 
   return (
-    <div
-      className={css.backdrop}
-      onClick={handleBackdropClick}
-      onKeyDown={handleKeyDown}
-      tabIndex={-1}
+    <ReactModal
+      isOpen={!!image}
+      onRequestClose={onClose}
+      className={css.modal}
+      overlayClassName={css.overlay}
     >
-      <div className={css.modal}>
-        <img src={image.urls.regular} alt={image.alt_description} />
-      </div>
-    </div>
+      <img src={image.urls.full} alt={image.alt_description || image} />
+    </ReactModal>
   );
 }

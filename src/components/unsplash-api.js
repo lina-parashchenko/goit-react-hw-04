@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const ACCESS_KEY = "ZPyPZTZXbsO4aUsXink8LMvJG_aCbTKm8FNJSwccMcI";
 
 export async function fetchImages(query, page = 1) {

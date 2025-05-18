@@ -1,6 +1,9 @@
-import { useState } from "react";
+import css from "./App.module.css";
+
+import { useEffect, useState } from "react";
+import { fetchImages } from "../unsplash-api";
+
 import SearchBar from "../SearchBar/SearchBar";
-import { fetchImages } from "../unsplashAPI";
 import { Toaster, toast } from "react-hot-toast";
 import Loader from "../Loader/Loader";
 import ImageGallery from "../ImageGallery/ImageGallery";
@@ -17,70 +20,51 @@ export default function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [totalImages, setTotalImages] = useState(0);
 
-  const handleSearch = async (newQuery) => {
-    if (newQuery.trim() === "") {
-      toast.error("Please enter a search term");
+  useEffect(() => {
+    if (!query) return;
 
-      return;
-    }
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const { images: results, total } = await fetchImages(query, page);
+        setImages((prev) => (page === 1 ? results : [...prev, ...results]));
+        setTotalImages(total);
+      } catch (err) {
+        setError("Failed to fetch images.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    fetchData();
+  }, [query, page]);
+
+  const handleSearch = (newQuery) => {
+    if (newQuery === query) return;
     setQuery(newQuery);
-    setImages([]);
     setPage(1);
+    setImages([]);
     setError(null);
-
-    try {
-      setIsLoading(true);
-      const { images: results, total } = await fetchImages(newQuery, 1);
-      setImages(results);
-      setTotalImages(total);
-    } catch (err) {
-      setError("Failed to fetch images.");
-    } finally {
-      setIsLoading(false);
-    }
   };
 
-  const handleLoadMore = async () => {
-    const nextPage = page + 1;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      setIsLoading(true);
-      const { images: newImages } = await fetchImages(query, nextPage);
-      newImages((prevImages) => [...prevImages, ...results]);
-      setPage(nextPage);
-    } catch (err) {
-      setError("Failed to load more images.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleImageClick = (image) => {
-    setSelectedImage(image);
+  const handleLoadMore = () => {
+    setPage((prev) => prev + 1);
   };
 
   return (
-    <div>
+    <div className={css.container}>
       <Toaster position="top-right" />
       <SearchBar onSubmit={handleSearch} />
-
       {error && <ErrorMessage message={error} />}
-
-      {images.length > 0 && !error && (
+      {images.length > 0 && (
         <>
-          <ImageGallery images={images} onImageClick={handleImageClick} />
-
+          <ImageGallery images={images} onImageClick={setSelectedImage} />
           {images.length < totalImages && (
             <LoadMoreBtn onClick={handleLoadMore} />
           )}
         </>
       )}
-
       {isLoading && <Loader />}
-
       {selectedImage && (
         <ImageModal
           image={selectedImage}
